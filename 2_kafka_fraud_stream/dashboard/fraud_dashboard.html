@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fraud Alert Dashboard</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+    h2 { color: #d9534f; }
+    .alert { padding: 10px; background: white; margin-bottom: 10px; border-left: 5px solid #d9534f; }
+  </style>
+</head>
+<body>
+  <h2>🚨 Real-Time Fraud Alerts</h2>
+  <div id="alerts"></div>
+
+  <script>
+    const socket = io("http://localhost:5001");
+
+    socket.on("fraud_alert", function(data) {
+      const container = document.getElementById("alerts");
+      const alert = document.createElement("div");
+      alert.className = "alert";
+      alert.innerHTML = `
+        <strong>User:</strong> ${data.user_id} <br>
+        <strong>Amount:</strong> $${data.amount} <br>
+        <strong>Country:</strong> ${data.country} <br>
+        <strong>Device:</strong> ${data.device_type} <br>
+        <strong>Fraud Score:</strong> ${data.fraud_score.toFixed(2)}
+      `;
+      container.prepend(alert);
+      if (container.childElementCount > 10) {
+        container.removeChild(container.lastChild);
+      }
+    });
+  </script>
+</body>
+</html>
